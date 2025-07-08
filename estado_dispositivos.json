@@ -1,0 +1,125 @@
+{
+  "dispositivos": {
+    "luz": {
+      "encendido": false,
+      "ubicaciones": {},
+      "ultima_accion": null,
+      "accion": "apagado",
+      "timestamp": "2025-07-08T02:24:27.397803"
+    },
+    "ventilador": {
+      "encendido": false,
+      "ubicaciones": {},
+      "velocidad": 1,
+      "ultima_accion": null,
+      "accion": "apagado",
+      "timestamp": "2025-07-08T02:24:27.397808"
+    },
+    "televisor": {
+      "encendido": false,
+      "ubicaciones": {},
+      "canal": 1,
+      "volumen": 50,
+      "ultima_accion": null,
+      "accion": "apagado",
+      "timestamp": "2025-07-08T02:24:27.397811"
+    },
+    "calefactor": {
+      "encendido": false,
+      "ubicaciones": {},
+      "temperatura": 20,
+      "ultima_accion": null,
+      "accion": "apagado",
+      "timestamp": "2025-07-08T02:24:27.397812"
+    },
+    "volumen": {
+      "nivel": 50,
+      "silenciado": false,
+      "ultima_accion": null,
+      "accion": "normal",
+      "timestamp": "2025-07-08T02:24:27.397813"
+    },
+    "brillo": {
+      "nivel": 70,
+      "ultima_accion": null,
+      "accion": "normal",
+      "timestamp": "2025-07-08T02:24:27.397814"
+    },
+    "LUZ": {
+      "ultima_accion": "ENCENDER",
+      "accion": "ENCENDER",
+      "timestamp": "2025-07-08T12:48:34.288460"
+    },
+    "BRILLO": {
+      "ultima_accion": "SUBIR",
+      "accion": "SUBIR",
+      "timestamp": "2025-07-08T02:42:36.240891"
+    }
+  },
+  "historial": [
+    {
+      "timestamp": "2025-07-08T02:24:27.397945",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:29:08.887533",
+      "dispositivo": "BRILLO",
+      "ubicacion": null,
+      "accion": "SUBIR",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:31:24.974190",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:36:35.523271",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:42:19.600786",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:42:36.240897",
+      "dispositivo": "BRILLO",
+      "ubicacion": null,
+      "accion": "SUBIR",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:50:51.474952",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T02:56:24.519772",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    },
+    {
+      "timestamp": "2025-07-08T12:48:34.288488",
+      "dispositivo": "LUZ",
+      "ubicacion": null,
+      "accion": "ENCENDER",
+      "valor": null
+    }
+  ],
+  "ultima_actualizacion": "2025-07-08T12:48:34.288493"
+}

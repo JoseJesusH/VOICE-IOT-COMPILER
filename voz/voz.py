@@ -1,42 +1,25 @@
-# voz/voz.py
+"""
+Módulo principal de voz - versión simplificada
+"""
 
-import pyttsx3
-import platform
-
-def hablar(texto):
-    motor = pyttsx3.init()
-    motor.setProperty('rate', 175)
-    motor.setProperty('volume', 1.0)
-
-    sistema = platform.system()
-    voces = motor.getProperty('voices')
-
-    if sistema == "Darwin":  # macOS
-        for voz in voces:
-            if "es" in voz.id.lower() or "spanish" in voz.name.lower():
-                motor.setProperty('voice', voz.id)
-                break
-    elif sistema == "Windows":
+class GestorVoz:
+    """Gestor simple del sistema de voz"""
+    
+    def __init__(self):
+        self.activo = False
+    
+    def procesar_comando_voz(self, callback=None):
+        """Procesar un comando de voz"""
         try:
-            import pythoncom
-            pythoncom.CoInitialize()
-            for voz in voces:
-                if "spanish" in voz.name.lower() or "español" in voz.name.lower():
-                    motor.setProperty('voice', voz.id)
-                    break
-        except ImportError:
-            print("❌ pythoncom no disponible en este sistema.")
+            from speech.recognizer import reconocer_comando_voz
+            comando = reconocer_comando_voz()
+            
+            if comando and callback:
+                callback(comando)
+                return comando
+            
+            return None
+                
         except Exception as e:
-            print(f"❌ Error inicializando voz en Windows: {e}")
-    else:
-        # En Linux puedes definir voz por defecto si deseas
-        pass
-
-    motor.say(texto)
-    motor.runAndWait()
-
-    if sistema == "Windows":
-        try:
-            pythoncom.CoUninitialize()
-        except:
-            pass
+            print(f"Error procesando comando de voz: {e}")
+            return None
