@@ -1,0 +1,4 @@
+SpeechRecognition
+paho-mqtt
+pyserial
+

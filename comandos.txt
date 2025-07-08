@@ -1,0 +1,17 @@
+🔊 VOLUMEN y BRILLO
+| Acción          | Comando de voz                                   | Qué hace                      |
+| --------------- | ------------------------------------------------ | ----------------------------- |
+| Subir           | "sube volumen", "aumenta brillo"                 | Aumenta 10%                   |
+| Bajar           | "baja volumen", "reduce brillo"                  | Disminuye 10%                 |
+| Ajustar directo | "ajusta volumen a 70", "configura brillo a 40"   | Ajusta al porcentaje indicado |
+| Silenciar       | "silencia volumen", "mutea volumen"              | Silencia el sonido            |
+| Activar sonido  | "activa volumen", "vuelve el sonido", "desmutea" | Quita el silencio             |
+
+💡 DISPOSITIVOS DEL HOGAR
+Dispositivos soportados:"luz", "ventilador", "televisor", "calefactor"
+Habitaciones reconocidas:"cocina", "dormitorio", "sala", "baño", "oficina"
+| Acción   | Comando de voz                                          | Qué hace                |
+| -------- | ------------------------------------------------------- | ----------------------- |
+| Encender | "enciende luz", "prende ventilador en cocina"           | Enciende el dispositivo |
+| Apagar   | "apaga televisor", "desactiva calefactor en dormitorio" | Apaga el dispositivo    |
+
