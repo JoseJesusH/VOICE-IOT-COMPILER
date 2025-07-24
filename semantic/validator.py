@@ -32,8 +32,8 @@ class ValidadorSemanticoIoT:
         self.compatibilidad = {
             "ENCENDER": {"LUZ", "VENTILADOR", "TELEVISOR", "CALEFACTOR"},
             "APAGAR": {"LUZ", "VENTILADOR", "TELEVISOR", "CALEFACTOR"},
-            "SUBIR": {"VOLUMEN", "BRILLO"},
-            "BAJAR": {"VOLUMEN", "BRILLO"},
+            "SUBIR": {"VOLUMEN", "BRILLO", "LUZ"},  # Agregado LUZ
+            "BAJAR": {"VOLUMEN", "BRILLO", "LUZ"},  # Agregado LUZ
             "AJUSTAR": {"VOLUMEN", "BRILLO"},
             "SILENCIAR": {"VOLUMEN"},
             "ACTIVAR": {"VOLUMEN"},

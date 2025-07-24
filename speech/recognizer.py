@@ -1,9 +1,8 @@
 # ============================================================================
-# speech/recognizer.py - Versión con debug mejorado
+# speech/recognizer.py - Versión SIN TTS para evitar conflictos
 # ============================================================================
 
 import speech_recognition as sr
-import pyttsx3
 import threading
 from datetime import datetime
 import json
@@ -20,8 +19,8 @@ class VoiceRecognizer:
             logger.info("Inicializando VoiceRecognizer...")
             self.recognizer = sr.Recognizer()
             self.microphone = sr.Microphone()
-            self.tts_engine = None
-            self.setup_tts()
+            # REMOVED: TTS engine initialization to avoid conflicts
+            self.tts_enabled = False  # Disabled to prevent conflicts
             self.calibrate_microphone()
             self.stats = {
                 'total_commands': 0,
@@ -35,35 +34,14 @@ class VoiceRecognizer:
             raise
     
     def setup_tts(self):
-        """Configurar síntesis de voz en español"""
+        """TTS deshabilitado para evitar conflictos con GUI"""
         try:
-            logger.info("Configurando TTS...")
-            self.tts_engine = pyttsx3.init()
-            
-            voices = self.tts_engine.getProperty('voices')
-            spanish_voice_found = False
-            
-            logger.info(f"Voces disponibles: {len(voices)}")
-            
-            for i, voice in enumerate(voices):
-                logger.debug(f"Voz {i}: {voice.name} - {voice.id}")
-                if any(indicator in voice.name.lower() for indicator in ['spanish', 'es', 'español', 'diego', 'mónica', 'albert']):
-                    self.tts_engine.setProperty('voice', voice.id)
-                    spanish_voice_found = True
-                    logger.info(f"Voz en español configurada: {voice.name}")
-                    break
-            
-            if not spanish_voice_found:
-                logger.warning("No se encontró voz en español, usando voz por defecto")
-            
-            # Configurar parámetros de voz
-            self.tts_engine.setProperty('rate', 150)  # Velocidad
-            self.tts_engine.setProperty('volume', 0.9)  # Volumen
-            
-            logger.info("TTS configurado correctamente")
+            logger.info("TTS deshabilitado en recognizer para evitar conflictos")
+            self.tts_enabled = False
+            # No inicializar pyttsx3 aquí - dejamos que la GUI lo maneje
         except Exception as e:
-            logger.error(f"Error configurando TTS: {e}", exc_info=True)
-            self.tts_engine = None
+            logger.error(f"Error en setup_tts: {e}")
+            self.tts_enabled = False
     
     def calibrate_microphone(self):
         """Calibrar micrófono para ruido ambiente"""
@@ -82,26 +60,21 @@ class VoiceRecognizer:
             logger.error(f"Error calibrando micrófono: {e}", exc_info=True)
     
     def speak(self, text):
-        """Retroalimentación auditiva thread-safe"""
-        def _speak():
-            try:
-                if self.tts_engine:
-                    logger.debug(f"Hablando: {text}")
-                    self.tts_engine.say(text)
-                    self.tts_engine.runAndWait()
-                else:
-                    logger.warning("TTS no disponible")
-            except Exception as e:
-                logger.error(f"Error en síntesis de voz: {e}", exc_info=True)
-        
-        threading.Thread(target=_speak, daemon=True).start()
+        """Retroalimentación de voz DESHABILITADA - solo muestra en consola"""
+        try:
+            # FIXED: No usar TTS aquí para evitar conflictos
+            print(f"🎤 Recognizer: {text}")
+            logger.info(f"Recognizer feedback: {text}")
+            # Let the GUI handle all TTS - no pyttsx3 here
+        except Exception as e:
+            logger.error(f"Error en speak (disabled): {e}")
     
     def get_stats(self):
         """Obtener estadísticas de uso"""
         return self.stats.copy()
 
 def reconocer_comando_voz():
-    """Función principal para reconocimiento de voz con manejo robusto de errores"""
+    """Función principal para reconocimiento de voz SIN conflictos TTS"""
     try:
         logger.info("=== INICIANDO RECONOCIMIENTO DE VOZ ===")
         recognizer = VoiceRecognizer()
@@ -145,7 +118,9 @@ def reconocer_comando_voz():
             
             print(f"📝 Reconocido: {command}")
             logger.info(f"Comando reconocido exitosamente: {command}")
-            recognizer.speak("Comando recibido")
+            
+            # FIXED: No usar TTS aquí - solo feedback en consola
+            print("✅ Comando recibido y procesado")
             
             return command.lower().strip()
         
@@ -160,25 +135,28 @@ def reconocer_comando_voz():
                 )
                 print(f"📝 Reconocido (offline): {command}")
                 logger.info(f"Comando reconocido offline: {command}")
-                recognizer.speak("Comando recibido usando reconocimiento local")
+                
+                # FIXED: No usar TTS - solo mensaje en consola
+                print("✅ Comando recibido usando reconocimiento local")
                 return command.lower().strip()
+                
             except Exception as offline_error:
                 logger.error(f"Error en reconocimiento offline: {offline_error}")
-                recognizer.speak("Error de conexión y reconocimiento local no disponible")
+                print("❌ Error de conexión y reconocimiento local no disponible")
                 recognizer.stats['failed_recognitions'] += 1
                 return None
         
         except sr.UnknownValueError:
             print("❌ No se pudo entender el audio")
             logger.warning("Audio no reconocido")
-            recognizer.speak("No entendí el comando, intenta de nuevo")
+            print("💡 Intenta hablar más claro y cerca del micrófono")
             recognizer.stats['failed_recognitions'] += 1
             return None
             
         except Exception as e:
             logger.error(f"Error inesperado en reconocimiento: {e}", exc_info=True)
             print(f"❌ Error inesperado en reconocimiento: {str(e)}")
-            recognizer.speak("Ocurrió un error inesperado")
+            print("⚠️ Ocurrió un error inesperado")
             return None
     
     except Exception as e:
@@ -186,4 +164,46 @@ def reconocer_comando_voz():
         print(f"❌ Error crítico: {str(e)}")
         print("Stacktrace:")
         traceback.print_exc()
+        return None
+
+# Alternative simple function if the class approach has issues
+def simple_voice_recognition():
+    """Versión ultra-simple de reconocimiento sin TTS"""
+    try:
+        print("🎤 Iniciando reconocimiento simple...")
+        
+        recognizer = sr.Recognizer()
+        microphone = sr.Microphone()
+        
+        with microphone as source:
+            recognizer.adjust_for_ambient_noise(source, duration=1)
+            print("🎤 Escuchando comando...")
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
+        
+        print("🔄 Procesando...")
+        command = recognizer.recognize_google(audio, language="es-ES")
+        
+        print(f"✅ Comando: {command}")
+        return command.lower().strip()
+        
+    except sr.WaitTimeoutError:
+        print("⏰ Timeout - no se detectó audio")
+        return None
+    except sr.UnknownValueError:
+        print("❌ No se entendió el comando")
+        return None
+    except sr.RequestError as e:
+        print(f"❌ Error de servicio: {e}")
+        return None
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return None
+
+# For backward compatibility with your existing code
+def reconocer_comando_voz_backup():
+    """Función de respaldo si hay problemas con la principal"""
+    try:
+        return simple_voice_recognition()
+    except Exception as e:
+        print(f"❌ Error en función de respaldo: {e}")
         return None

@@ -22,21 +22,30 @@ class TokenizerIoT:
             "subir": "SUBIR",
             "sube": "SUBIR",
             "aumentar": "SUBIR",
+            "aumenta": "SUBIR",
             "bajar": "BAJAR",
             "baja": "BAJAR",
             "disminuir": "BAJAR",
+            "disminuye": "BAJAR",
             "ajustar": "AJUSTAR",
             "ajusta": "AJUSTAR",
             "poner": "AJUSTAR",
+            "pon": "AJUSTAR",
+            "configura": "AJUSTAR",
             "silenciar": "SILENCIAR",
             "silencia": "SILENCIAR",
             "mutear": "SILENCIAR",
+            "mutea": "SILENCIAR",
             "activar": "ACTIVAR",
             "activa": "ACTIVAR",
+            "desmutear": "ACTIVAR",
+            "desmutea": "ACTIVAR",
             "ver": "VER",
             "mostrar": "VER",
             "dime": "VER",
-            "decir": "VER"
+            "decir": "VER",
+            "consultar": "VER",
+            "consulta": "VER"
         }
         
         self.DISPOSITIVOS = {

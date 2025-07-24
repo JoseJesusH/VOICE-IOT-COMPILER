@@ -1,5 +1,5 @@
 # ============================================================================
-# interface/gui.py - Versión corregida para evitar cierre inesperado
+# interface/gui.py - 
 # ============================================================================
 
 import tkinter as tk
@@ -12,6 +12,8 @@ import logging
 from datetime import datetime
 from typing import Optional, Callable, Dict, Any
 import traceback
+import queue
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -84,31 +86,17 @@ class InterfazPictogramasAccesible:
         }
     
     def setup_tts(self):
-        """Configurar síntesis de voz para macOS de forma segura"""
+        """Setup TTS ultra-simple - no conflicts"""
         try:
-            self.tts_engine = pyttsx3.init()
-            
-            # Configurar voz en español para macOS
-            voices = self.tts_engine.getProperty('voices')
-            spanish_voice_set = False
-            
-            for voice in voices:
-                if any(indicator in voice.name.lower() for indicator in ['spanish', 'es', 'español', 'diego', 'mónica', 'bubbles']):
-                    self.tts_engine.setProperty('voice', voice.id)
-                    spanish_voice_set = True
-                    logger.info(f"Voz en español configurada: {voice.name}")
-                    break
-            
-            if not spanish_voice_set:
-                logger.warning("No se encontró voz en español, usando voz por defecto")
-            
-            # Configurar parámetros para macOS
-            self.tts_engine.setProperty('rate', 180)
-            self.tts_engine.setProperty('volume', 0.9)
-            
+            # Don't initialize pyttsx3 at all - avoids all conflicts
+            self.tts_available = True
+            logger.info("TTS configured in simple mode (no conflicts)")
+            print("✅ TTS configured safely")
         except Exception as e:
-            logger.error(f"Error configurando TTS: {e}")
-            self.tts_engine = None
+            logger.error(f"Error in TTS setup: {e}")
+            self.tts_available = False
+
+    
     
     def load_images(self):
         """Cargar pictogramas accesibles con manejo robusto de errores"""
@@ -542,47 +530,65 @@ class InterfazPictogramasAccesible:
         except Exception as e:
             logger.error(f"Error actualizando estado: {e}")
     
-    def speak(self, text: str):
-        """Síntesis de voz thread-safe y sin bloqueos"""
-        if self.tts_busy or not self.tts_engine:
+    def speak(self, text: str, priority: int = 0):
+        """Ultra-simple TTS que evita TODOS los conflictos"""
+        if not text or not text.strip():
             return
-            
-        def _speak():
-            try:
-                self.tts_busy = True
-                self.tts_engine.say(text)
-                self.tts_engine.runAndWait()
-            except Exception as e:
-                logger.error(f"Error en síntesis de voz: {e}")
-            finally:
-                self.tts_busy = False
         
-        threading.Thread(target=_speak, daemon=True).start()
+        try:
+            # ALWAYS show in console - no conflicts here
+            print(f"🔊 GUI: {text}")
+            logger.info(f"GUI TTS: {text}")
+            
+            # Optional: Try system TTS (no pyttsx3 conflicts)
+            def try_system_tts():
+                try:
+                    import subprocess
+                    import platform
+                    
+                    system = platform.system()
+                    if system == "Darwin":  # macOS
+                        subprocess.run(["say", text], check=False, timeout=3)
+                    elif system == "Linux":
+                        subprocess.run(["espeak", text], check=False, timeout=3)
+                    # Skip Windows for now to avoid complexity
+                    
+                except Exception:
+                    pass  # Fail silently - console output is enough
+            
+            # Run system TTS in background without waiting
+            threading.Thread(target=try_system_tts, daemon=True).start()
+            
+        except Exception as e:
+            # Ultimate fallback - just console
+            print(f"🔊 TTS: {text}")
+
     
+
     def show_help(self):
         """Mostrar ventana de ayuda"""
         try:
             help_text = """🏠 ASISTENTE INCLUSIVO IoT - AYUDA
 
-COMANDOS DE VOZ DISPONIBLES:
-• "Enciende la luz [en habitación]"
-• "Apaga el ventilador [en habitación]"  
-• "Sube/baja el volumen"
-• "Sube/baja el brillo"
-• "Dime la hora"
-• "Cuánta batería tengo"
+                COMANDOS DE VOZ DISPONIBLES:
+                • "Enciende la luz [en habitación]"
+                • "Apaga el ventilador [en habitación]"  
+                • "Sube/baja el volumen"
+                • "Sube/baja el brillo"
+                • "Dime la hora"
+                • "Cuánta batería tengo"
 
-ATAJOS DE TECLADO:
-• Espacio/Enter: Activar micrófono
-• Escape: Salir de la aplicación
-• F1: Mostrar esta ayuda
+                ATAJOS DE TECLADO:
+                • Espacio/Enter: Activar micrófono
+                • Escape: Salir de la aplicación
+                • F1: Mostrar esta ayuda
 
-HABITACIONES DISPONIBLES:
-• Cocina, Dormitorio, Sala, Baño, Oficina
+                HABITACIONES DISPONIBLES:
+                • Cocina, Dormitorio, Sala, Baño, Oficina
 
-DISPOSITIVOS DISPONIBLES:
-• Luz, Ventilador, Televisor, Calefactor
-• Volumen, Brillo"""
+                DISPOSITIVOS DISPONIBLES:
+                • Luz, Ventilador, Televisor, Calefactor
+                • Volumen, Brillo"""
             
             messagebox.showinfo("Ayuda - Asistente IoT", help_text)
             
@@ -594,14 +600,28 @@ DISPOSITIVOS DISPONIBLES:
         self.callback = callback
     
     def on_closing(self):
-        """Manejar cierre de aplicación de forma segura"""
+        """Manejar cierre de aplicación de forma segura - VERSIÓN CORREGIDA"""
         try:
-            self.speak("Cerrando asistente. Hasta luego.")
-            # Dar tiempo para que se escuche el mensaje
-            self.root.after(1500, self.root.destroy)
+            # Detener TTS primero
+            self.stop_tts()
+            
+            # Mensaje de despedida (solo si TTS está funcionando)
+            if hasattr(self, 'tts_engine') and self.tts_engine:
+                try:
+                    # Usar TTS directo para mensaje de cierre
+                    self.tts_engine.say("Cerrando asistente. Hasta luego.")
+                    self.tts_engine.runAndWait()
+                except:
+                    print("🔊 Cerrando asistente. Hasta luego.")
+            
+            # Cerrar ventana después de pausa
+            self.root.after(500, self.root.destroy)
+            
         except Exception as e:
             logger.error(f"Error cerrando aplicación: {e}")
+            # Forzar cierre si hay error
             self.root.destroy()
+
     
     def iniciar(self):
         """Iniciar interfaz con manejo robusto de errores"""

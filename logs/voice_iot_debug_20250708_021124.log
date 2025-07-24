@@ -1,1 +1,0 @@
-2025-07-08 02:11:24,645 - __main__ - ERROR - Error importando módulos: cannot import name 'actualizar_estado' from 'interface.state_manager' (/Users/josehuertas/Downloads/VOICE_IOT_COMPILER_/interface/state_manager.py)
